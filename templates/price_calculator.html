@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Calculator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='price_calculator.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-4 mb-4 text-light">Price Calculator</h1>
+        <p class="text-light">Grand Total: <span id="grand-total">$0.00</span></p>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item_id in MAPlist.keys() %}
+                <tr data-item-id="{{ item_id }}">
+                    <td>{{ item_id }}</td>
+                    <td>{{ MAPlist[item_id] }}</td>
+                    <td class="quantity">0</td>
+                    <td><button class="btn btn-primary increment">+</button></td>
+                    <td><button class="btn btn-primary incremend">+ 64</button></td>
+                    <td><button class="btn btn-primary decrement">-</button></td>
+                    <td><button class="btn btn-primary decremend">- 64</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

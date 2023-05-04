@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Bank Hendyware Tech</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <img src="{{ url_for('static', filename='ironbankart.jpg') }}" alt="/la spawn iron_market" class="header-image">
+            <h1 class="mt-4 mb-4 text-light">Iron Bank Hendyware Tech</h1>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Avg Price</th>
+                        <th>Highest Price</th>
+                        <th>Lowest Price</th>
+                        <th>View Graph</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item_id in MAPlist.keys() %}
+                    <tr>
+                        <td>{{ item_id }}</td>
+                        <td>{{ MAPlist[item_id] }}</td>
+                        <td>{{ MHPlist[item_id] }}</td>
+                        <td>{{ MLPlist[item_id] }}</td>
+                        <td><button class="view-graph" data-item-id="{{ item_id }}">View Graph</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('price_calculator') }}" class="btn btn-primary mb-4">Price Calculator</a>
+        </div>
+        <!-- Rest of the content (table) -->
+    </div>
+
+    <!-- Graph modal -->
+    <div id="graph-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="graph-title"></h2>
+            <img id="graph-image" src="" alt="Graph">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewGraphButtons = document.querySelectorAll('.view-graph');
+            const graphModal = document.getElementById('graph-modal');
+            const graphTitle = document.getElementById('graph-title');
+            const graphImage = document.getElementById('graph-image');
+            const closeModal = document.querySelector('.close');
+
+            viewGraphButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = button.getAttribute('data-item-id');
+                    fetch('{{ url_for("load_graph") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ item_id: itemId }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        graphTitle.textContent = itemId + ' Graph';
+                        graphImage.src = 'data:image/png;base64,' + data.image_base64;
+                        graphModal.style.display = 'block';
+                    });
+                });
+            });
+
+            closeModal.addEventListener('click', function() {
+                graphModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === graphModal) {
+                    graphModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
